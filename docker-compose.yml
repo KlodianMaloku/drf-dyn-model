@@ -1,0 +1,31 @@
+version: '3'
+
+x-common-vars: &common-vars
+  DATABASE_URL: postgres://postgres:postgres@db:5432/drfdynmodels
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: drfdynmodels
+    ports:
+      - 55432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+        <<: *common-vars
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
