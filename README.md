@@ -1,5 +1,5 @@
 # drf-dyn-model
-A django rest framework app using dynamic models
+A django rest framework app creating dynamic models using schema editor
 
 
 ## Initial configurations
