@@ -1,10 +1,14 @@
-from django.urls import path
-from drfdynmodels.views import TableAPIView, UpdateTableAPIView, TableRowAPIView, TableRowsAPIView
 
+from django.urls import path, include
+from drfdynmodels.views import TableAPIView, TableActionsView
+
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+
+router.register('', TableActionsView, basename='table-actions')
 
 urlpatterns = [
-    path('table', TableAPIView.as_view(), name='create_table'),
-    path('table/<str:id>', UpdateTableAPIView.as_view(), name='update_table'),
-    path('table/<str:id>/row', TableRowAPIView.as_view(), name='add_row'),
-    path('table/<str:id>/rows', TableRowsAPIView.as_view(), name='get_rows'),
+    path('table', TableAPIView.as_view(), name='create-table'),
+    path('table/<str:id>/', include(router.urls))
 ]

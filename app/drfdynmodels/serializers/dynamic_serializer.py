@@ -15,13 +15,13 @@ def create_dynamic_serializer(model):
     field_names = [f.name for f in model._meta.get_fields()]
 
     # Create Meta class
-    Meta = type('Meta', (), {'model': model, 'fields': field_names})
+    meta = type('Meta', (), {'model': model, 'fields': field_names})
 
     # Create serializer class
-    DynamicModelSerializer = type(
+    dynamic_model_serializer = type(
         'DynamicModelSerializer',
         (serializers.ModelSerializer,),
-        {'Meta': Meta}
+        {'Meta': meta}
     )
 
-    return DynamicModelSerializer
+    return dynamic_model_serializer

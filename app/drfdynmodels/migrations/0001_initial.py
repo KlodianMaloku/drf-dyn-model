@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import drfdynmodels.models.dynamic_models.models
+import drfdynmodels.models
 
 
 class Migration(migrations.Migration):
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=63)),
                 ('class_name', models.TextField()),
-                ('kwargs', drfdynmodels.models.dynamic_models.models.FieldKwargsJSON(default=dict)),
+                ('kwargs', drfdynmodels.models.FieldKwargsJSON(default=dict)),
                 ('model_schema', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='fields', to='drfdynmodels.modelschema')),
             ],
             options={

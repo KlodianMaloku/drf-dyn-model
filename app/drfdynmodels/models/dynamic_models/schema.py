@@ -4,16 +4,23 @@ from django.db.utils import DEFAULT_DB_ALIAS, ProgrammingError
 
 
 class ModelSchemaEditor:
+
+    """Wrapper for performing runtime schema changes."""
+
     def __init__(self, initial_model=None, db_name=DEFAULT_DB_ALIAS):
         self.initial_model = initial_model
         self.db_name = db_name
 
     def update_table(self, new_model):
+        created = False
         if self.initial_model and self.initial_model != new_model:
             self.alter_table(new_model)
         elif not self.initial_model:
             self.create_table(new_model)
+            created = True
         self.initial_model = new_model
+
+        return created, new_model
 
     def create_table(self, new_model):
         try:
@@ -38,6 +45,9 @@ class ModelSchemaEditor:
 
 
 class FieldSchemaEditor:
+
+    """Wrapper for performing runtime schema changes on fields."""
+
     def __init__(self, initial_field=None, db_name=DEFAULT_DB_ALIAS):
         self.initial_field = initial_field
         self.db_name = db_name

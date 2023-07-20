@@ -1,78 +1,11 @@
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
-from django.db.utils import DEFAULT_DB_ALIAS
 from django.utils.text import slugify
 
-from drfdynmodels.models.dynamic_models import compat, config
+from drfdynmodels.models.dynamic_models import compat
 from drfdynmodels.models.dynamic_models.exceptions import InvalidFieldNameError, NullFieldChangedError
-from drfdynmodels.models.dynamic_models.factory import ModelFactory
-from drfdynmodels.models.dynamic_models.schema import FieldSchemaEditor, ModelSchemaEditor
-from drfdynmodels.utils.utils import ModelRegistry
-
-
-class ModelSchema(models.Model):
-    name = models.CharField(max_length=250, unique=True)
-    db_name = models.CharField(max_length=32, default=DEFAULT_DB_ALIAS)
-    managed = models.BooleanField(default=True)
-    db_table_name = models.CharField(null=True, max_length=250)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._registry = ModelRegistry(self.app_label)
-        self._initial_name = self.name
-        initial_model = self.get_registered_model()
-        self._schema_editor = (
-            ModelSchemaEditor(initial_model=initial_model, db_name=self.db_name)
-            if self.managed
-            else None
-        )
-
-    def save(self, **kwargs):
-        super().save(**kwargs)
-        if self._schema_editor:
-            self._schema_editor.update_table(self._factory.get_model())
-
-        self._initial_name = self.name
-
-    def delete(self, **kwargs):
-        if self._schema_editor:
-            self._schema_editor.drop_table(self.as_model())
-        self._factory.destroy_model()
-        super().delete(**kwargs)
-
-    def get_registered_model(self):
-        return self._registry.get_model(self.model_name)
-
-    @property
-    def _factory(self):
-        return ModelFactory(self)
-
-    @property
-    def app_label(self):
-        return config.dynamic_models_app_label()
-
-    @property
-    def model_name(self):
-        return self.get_model_name(self.name)
-
-    @property
-    def initial_model_name(self):
-        return self.get_model_name(self._initial_name)
-
-    @classmethod
-    def get_model_name(cls, name):
-        return name.title().replace(" ", "")
-
-    @property
-    def db_table(self):
-        return self.db_table_name if self.db_table_name else self._default_db_table_name()
-
-    def _default_db_table_name(self):
-        safe_name = slugify(self.name).replace("-", "_")
-        return f"{self.app_label}_{safe_name}"
-
-    def as_model(self):
-        return self._factory.get_model()
+from drfdynmodels.models.dynamic_models.schema import FieldSchemaEditor
+from drfdynmodels.models.modelschema import ModelSchema
 
 
 class FieldKwargsJSON(compat.JSONField):
@@ -122,9 +55,9 @@ class FieldKwargsJSON(compat.JSONField):
 class FieldSchema(models.Model):
     _PROHIBITED_NAMES = ("__module__", "_declared")
 
-    name = models.CharField(max_length=63)
+    name = models.CharField(max_length=63, null=False, blank=False)
     model_schema = models.ForeignKey(ModelSchema, on_delete=models.CASCADE, related_name="fields")
-    class_name = models.TextField()
+    class_name = models.TextField(null=False, blank=False)
     kwargs = FieldKwargsJSON(default=dict)
 
     class Meta:
@@ -133,13 +66,13 @@ class FieldSchema(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._initial_name = self.name
-        self._initial_null = self.null
         self._initial_field = self.get_registered_model_field()
         self._schema_editor = (
             FieldSchemaEditor(initial_field=self._initial_field, db_name=self.model_schema.db_name)
             if self.model_schema.managed
             else None
         )
+        self._initial_null = self.null
 
     def save(self, **kwargs):
         self.validate()
@@ -165,7 +98,7 @@ class FieldSchema(models.Model):
         latest_model = self.model_schema.get_registered_model()
         if latest_model and self.name:
             try:
-                return latest_model._meta.get_field(self.name)
+                return latest_model._meta.get_field(self.name.lower().replace(" ", "_"))
             except FieldDoesNotExist:
                 pass
 

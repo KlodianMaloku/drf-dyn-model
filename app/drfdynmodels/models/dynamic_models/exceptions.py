@@ -1,4 +1,5 @@
-"""Provide exceptions to be raised by the `dynamic_models` app.
+"""
+Provide exceptions to be raised by the `dynamic_models` app.
 
 All exceptions inherit from a `DynamicModelError` base class.
 """

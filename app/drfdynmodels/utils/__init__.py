@@ -54,3 +54,15 @@ class ModelRegistry:
             del apps.all_models[self.app_label][model_name.lower()]
         except KeyError as err:
             raise LookupError("'{}' not found.".format(model_name)) from err
+
+    def register_model(self, model):
+        apps.register_model(self.app_label, model)
+
+
+    @classmethod
+    def load_models_from_db(cls, app_label):
+        from drfdynmodels.models import ModelSchema
+        models = ModelSchema.objects.all()
+        for model in models:
+            if not cls(app_label).is_registered(model.model_name):
+                apps.register_model(app_label, model.as_model())

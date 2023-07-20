@@ -19,7 +19,6 @@ from django.urls import path, include
 from rest_framework_swagger import views
 
 
-
 urlpatterns = [
     path('swagger-docs/', views.get_swagger_view(title='DrfDynModels API Docs')),
     path('admin/', admin.site.urls),

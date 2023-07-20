@@ -1,3 +1,5 @@
+
+
 import importlib
 
 from django.db import models
@@ -8,6 +10,11 @@ from drfdynmodels.utils import ModelRegistry
 
 
 class DynamicModelBase(models.base.ModelBase):
+
+    """
+    Base Class for Dynamic Models
+    """
+
     def __instancecheck__(cls, instance):
         if issubclass(type(instance.__class__), DynamicModelBase):
             return cls._class_descriptor(instance.__class__) == cls._class_descriptor(cls)
@@ -20,6 +27,12 @@ class DynamicModelBase(models.base.ModelBase):
 
 
 class ModelFactory:
+
+    """
+    Factory for creating a Dynamic Model from a ModelSchema
+    Provides methods for creating, destroying, and registering the model
+    """
+
     def __init__(self, model_schema):
         self.schema = model_schema
         self.registry = ModelRegistry(model_schema.app_label)
@@ -31,7 +44,7 @@ class ModelFactory:
                 " because it has not been saved to the database"
             )
 
-        self.unregister_model()
+        # self.unregister_model()
         return DynamicModelBase(self.schema.model_name, (models.Model,), self.get_properties())
 
     def destroy_model(self):
@@ -59,6 +72,7 @@ class ModelFactory:
         return {
             "__module__": "{}.models".format(self.schema.app_label),
             "Meta": self._model_meta(),
+            "__app_label__": self.schema.app_label,
         }
 
     def _custom_fields(self):
@@ -69,13 +83,18 @@ class ModelFactory:
     def _model_meta(self):
         class Meta:
             app_label = self.schema.app_label
-            db_table = self.schema.db_table
+            db_table = self.schema.app_label + '_' + self.schema.db_table
             verbose_name = self.schema.name
 
         return Meta
 
 
 class FieldFactory:
+
+    """
+    Factory for creating a Django Model Field from a FieldSchema
+    """
+
     def __init__(self, field_schema):
         self.schema = field_schema
 
