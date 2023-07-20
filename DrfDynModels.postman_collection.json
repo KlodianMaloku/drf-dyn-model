@@ -1,0 +1,142 @@
+{
+	"info": {
+		"_postman_id": "9a2b770e-7e98-4931-9e90-610af1fb77c0",
+		"name": "DrfDynModels",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3322640"
+	},
+	"item": [
+		{
+			"name": "Edit Table",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"model23\",\n    \"db_name\": \"default\",\n    \"managed\": true,\n    \"db_table_name\": \"table23\",\n    \"fields\": [\n    {\n        \"name5555\": \"Field1\",\n        \"class_name\": \"django.db.models.TextField\",\n        \"kwargs\": {}\n    },\n    {\n        \"name\": \"Field2\",\n        \"class_name\": \"django.db.models.IntegerField\",\n        \"kwargs\": {\"default\": 0}\n    },\n    {\n        \"name\": \"Field3\",\n        \"class_name\": \"django.db.models.TextField\",\n        \"kwargs\": {\"null\": true}\n    }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/table/21",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"table",
+						"21"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Table",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"model28\",\n    \"db_name\": \"default\",\n    \"managed\": true,\n    \"db_table_name\": \"table28\",\n    \"fields\": [\n    {\n        \"name\": \"Field1\",\n        \"class_name\": \"django.db.models.TextField\",\n        \"kwargs\": {}\n    },\n    {\n        \"name\": \"Field2\",\n        \"class_name\": \"django.db.models.IntegerField\",\n        \"kwargs\": {\"default\": 0}\n    },\n    {\n        \"name\": \"Field3\",\n        \"class_name\": \"django.db.models.TextField\",\n        \"kwargs\": {\"null\": true}\n    }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/table",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"table"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add row",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"field1\": \"TEST\",\n        \"field2\": 2,\n        \"field3\": \"prova\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/table/24/row/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"table",
+						"24",
+						"row",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get rows",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/table/24/rows",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"table",
+						"24",
+						"rows"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
